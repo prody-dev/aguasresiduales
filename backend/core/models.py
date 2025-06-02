@@ -221,9 +221,76 @@ class ProtocoloMuestreo(models.Model):
         return f"Protocolo de Muestreo - OT: {self.OrdenTrabajo.codigo} - Punto: {self.PuntoMuestreo.identificacionPunto}"
 
 ## ------------- 5.- HOJA DE CAMPO -------------
-class MuestraHojaCampo(models.Model):
-    pass
+class PhMuestra(models.Model):
+    ph1 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    ph2 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    ph3 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        ph_values = [self.ph1, self.ph2, self.ph3]
+        
 
+class TemperaturaMuestra(models.Model):
+    temp1 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    temp2 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    temp3 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    def __str__(self):
+        temp_values = [self.temp1, self.temp2, self.temp3]
+class ConductividadMuestra(models.Model):
+    cond1 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    cond2 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    cond3 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        cond_values = [self.cond1, self.cond2, self.cond3]
+class TemperaturaAireMuestra(models.Model):
+    tempAire1 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    tempAire2 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    tempAire3 = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        tempAire_values = [self.tempAire1, self.tempAire2, self.tempAire3]
+class TiempoMuestra(models.Model):
+    tiempo1 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tiempo2 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    tiempo3 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        tiempo_values = [self.tiempo1, self.tiempo2, self.tiempo3]
+class VolumenMuestra(models.Model):
+    volumen1 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    volumen2 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    volumen3 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    def __str__(self):
+        volumen_values = [self.volumen1, self.volumen2, self.volumen3]
+
+condiciones_choices = [
+    ('soleado', 'Soleado'),
+    ('nublado', 'Nublado'),
+    ('medio_nublado', '1/2 Nublado'),
+]
+
+class MuestraHojaCampo(models.Model):
+    numero = models.PositiveIntegerField(null=True, blank=True)
+    hora = models.TimeField(null=True, blank=True)
+    ph = models.ForeignKey(PhMuestra, on_delete=models.CASCADE, null=True, blank=True)
+    temperatura = models.ForeignKey(TemperaturaMuestra, on_delete=models.CASCADE, null=True, blank=True)
+    conductividad = models.ForeignKey(ConductividadMuestra, on_delete=models.CASCADE, null=True, blank=True)
+    # False para Ausente y True para Presente ⬇︎
+    materiaFlotante = models.BooleanField(default=False)
+    temperaturaAire = models.ForeignKey(TemperaturaAireMuestra, on_delete=models.CASCADE, null=True, blank=True)
+    tiempoMuestra = models.ForeignKey(TiempoMuestra, on_delete=models.CASCADE, null=True, blank=True)
+    volumenMuestra = models.ForeignKey(VolumenMuestra, on_delete=models.CASCADE, null=True, blank=True)
+    color = models.CharField(max_length=50, null=True, blank=True)
+    olor = models.CharField(max_length=50, null=True, blank=True)
+    # True para Si y False para No ⬇︎
+    solido = models.BooleanField(default=False)
+    # True para Si y False para No ⬇︎
+    lluvia = models.BooleanField(default=False)
+    condicion = models.CharField(max_length=50, choices=condiciones_choices, null=True, blank=True)
+    
+    
 class HojaCampo(models.Model):
     #podria no se necesaria por la relacion con ProtocoloMuestreo ⬇︎
     OrdenTrabajo = models.ForeignKey(OrdenTrabajo, on_delete=models.CASCADE)
@@ -235,6 +302,7 @@ class HojaCampo(models.Model):
     normaReferencia = models.CharField(max_length=50)
     # se refiere a si es Bajo techo o Intemperie/Cielo abierto ⬇︎
     condicionMuestreo = models.CharField(max_length=50)
+    fechaMuestreo = models.DateField()
 
 ##  ------------- CADENA DE CUSTODIA -------------
 # class Preservador(models.Model):
