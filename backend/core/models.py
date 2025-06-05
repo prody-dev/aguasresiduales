@@ -1,59 +1,34 @@
 from django.db import models
 
 class Receptor(models.Model):
-    nombrePila = models.CharField(max_length=255)
-    apPaterno = models.CharField(max_length=255)
-    apMaterno = models.CharField(max_length=255)
+    nombrePila = models.CharField(max_length=50)
+    apPaterno = models.CharField(max_length=50)
+    apMaterno = models.CharField(max_length=50)
     correo = models.EmailField(blank=True, null=True)
-    celular = models.CharField(max_length=20, null=True, blank=True)
+    celular = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombrePila} {self.apPaterno} {self.apMaterno}"
 
 
 class Estado(models.Model):
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=50)
 
     def __str__(self):
         return self.nombre
     
-class Metodos(models.Model):
+class Metodo(models.Model):
     numero = models.PositiveIntegerField(null=True, blank=True)
-    codigo = models.CharField(max_length=255)
+    codigo = models.CharField(max_length=50)
 
-
-    def save(self, *args, **kwargs):
-        # Solo al crear, y si no se pasó número manualmente
-        if self._state.adding and self.numero is None:
-            ultimo = Metodos.objects.filter(organizacion=self.organizacion) \
-                                  .aggregate(max_num=models.Max('numero'))['max_num']
-            self.numero = (ultimo or 0) + 1
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.codigo
-    
 class Servicio(models.Model):
     numero = models.PositiveIntegerField(null=True, blank=True)
     nombreServicio = models.CharField(max_length=255)
-    metodos = models.ForeignKey(Metodos, on_delete=models.CASCADE)
-
-    
-    def save(self, *args, **kwargs):
-        # Solo asignar número si es un nuevo objeto
-        if self._state.adding and self.numero is None:
-            ultimo_numero = Servicio.objects.filter(organizacion=self.organizacion).aggregate(
-                ultimo=models.Max('numero'))['ultimo']
-            self.numero = (ultimo_numero or 0) + 1
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"{self.organizacion.nombre} - {self.numero} - {self.nombreServicio} - ${self.precio}"
+    metodo = models.ForeignKey(Metodo, on_delete=models.CASCADE)
 
 class Empresa(models.Model):
     numero = models.PositiveIntegerField(null=True, blank=True)
     nombre = models.CharField(max_length=255)
-    rfc = models.CharField(max_length=13)
     codigoPostal = models.CharField(max_length=10)
     ciudad = models.CharField(max_length=255)
     estado = models.CharField(max_length=255)
@@ -63,20 +38,10 @@ class Empresa(models.Model):
     contacto = models.CharField(max_length=255, null=True, blank=True)
     telefono = models.CharField(max_length=20, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        if self._state.adding and self.numero is None:
-            ultimo = Empresa.objects.filter(organizacion=self.organizacion).aggregate(max_num=models.Max('numero'))['max_num']
-            self.numero = (ultimo or 0) + 1
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.nombre
-
-
 class OrdenTrabajo(models.Model):
     numero = models.PositiveIntegerField(null=True, blank=True)
     codigo = models.CharField(max_length=255, blank=True)
-    nombreusuario = models.CharField(max_length=255, null=True, blank=True)
+    nombreUsuario = models.CharField(max_length=255, null=True, blank=True)
     estado = models.ForeignKey('Estado', on_delete=models.CASCADE)
     receptor = models.ForeignKey('Receptor', on_delete=models.CASCADE)
     empresa = models.ForeignKey('Empresa', on_delete=models.CASCADE)
@@ -98,11 +63,11 @@ class OrdenTrabajoServicio(models.Model):
 class SitioMuestreo(models.Model):
     #El nombre de la empresa, se puede obtener directamente de una consulta asi que puede no ser necesario aqui ⬇︎
     #nombreEmpresa = models.CharField(max_length=255)
-    domicilio = models.CharField(max_length=255)
-    giroEmpresa = models.CharField(max_length=255)
+    domicilio = models.CharField(max_length=255, null=True, blank=True)
+    giroEmpresa = models.CharField(max_length=255, null=True, blank=True)
     
     def __str__(self):
-        return self.nombreEmpresa
+        return self.domicilio if self.domicilio else "Sitio de Muestreo sin Domicilio"
 
 #------------- 2.- IDENTIFICACION DEL PUNTO DE MUESTREO -------------
 class TipoDescarga(models.Model):
@@ -113,7 +78,7 @@ class TipoDescarga(models.Model):
     def __str__(self):
         return self.nombre if self.nombre else self.descripcion
 
-class AguaResidualTratamientos(models.Model):
+class AguaResidualTratamiento(models.Model):
     nombre = models.CharField(max_length=50, null=True, blank=True)
     
     def __str__(self):
@@ -124,13 +89,13 @@ class PuntoMuestreo(models.Model):
     identificacionPunto = models.CharField(max_length=50)
     descripcionProceso = models.TextField(max_length=255, null=True, blank=True)
     origenMuestra = models.CharField(max_length=50)
-    aguaResidualOtros = models.CharField(max_length=50, null=True, blank=True)
-    horasOpera = models.CharField(max_length=50)
+    aguaResidualOtro = models.CharField(max_length=50, null=True, blank=True)
+    horasOperacion = models.CharField(max_length=50)
     horasDescarga = models.CharField(max_length=50)
     frecuenciaDescarga = models.CharField(max_length=50, default='')
     #esto es para la parte de nombre completo y puesto/cargo, podria hacerse de otra forma ⬇︎
     informacionProporcionada = models.CharField(max_length=50, null=True, blank=True)
-    aguaResidualTratamientos = models.ForeignKey(AguaResidualTratamientos, on_delete=models.CASCADE)
+    aguaResidualTratamiento = models.ForeignKey(AguaResidualTratamiento, on_delete=models.CASCADE)
     tipoDescarga = models.ForeignKey(TipoDescarga, on_delete=models.CASCADE)
     
     def __str__(self):
@@ -156,7 +121,7 @@ class PreservadorUtilizado(models.Model):
     def __str__(self):
         return self.nombre
 
-class frecuenciaMuestreo(models.Model):
+class FrecuenciaMuestreo(models.Model):
     horaOperacion = models.CharField(max_length=50, null=True, blank=True)
     # Se refiere a la cantidad minima de meustras que ya tiene la tabla ⬇︎
     numeroMuestrasSimples = models.CharField(max_length=50, null=True, blank=True)
@@ -166,7 +131,7 @@ class frecuenciaMuestreo(models.Model):
     def __str__(self):
         return f"{self.horaOperacion} - {self.numeroMuestrasSimples} muestras - {self.invervaloMinimo} a {self.invervaloMaximo}"
 
-class tipoAgua(models.Model):
+class TipoAgua(models.Model):
     nombre = models.CharField(max_length=50, null=True, blank=True)
     #para la parte de Otro ⬇︎
     descripcion = models.CharField(max_length=50, null=True, blank=True)
@@ -175,7 +140,7 @@ class tipoAgua(models.Model):
         return self.nombre if self.nombre else self.descripcion
 
     #Una descarga de agua residual siempre cae solo en 1 cuerpo receptor ⬇︎
-class cuerpoReceptor(models.Model):
+class CuerpoReceptor(models.Model):
     nombre = models.CharField(max_length=50, null=True, blank=True)
     #para la parte de Otro ⬇︎
     descripcion = models.CharField(max_length=50, null=True, blank=True)
@@ -185,15 +150,15 @@ class cuerpoReceptor(models.Model):
 
 class ProcedimientoMuestreo(models.Model):
     # Aqui debera ir siempre la norma NOM-002-SEMARNAT-1996 COMPLETA + DQO ⬇︎
-    ParametroADeterminar = models.CharField(max_length=50, null=True, blank=True)
-    MaterialUso = models.ForeignKey(MaterialUso, on_delete=models.CASCADE)
-    Recipiente = models.ForeignKey(Recipiente, on_delete=models.CASCADE)
-    PreservadorUtilizado = models.ForeignKey(PreservadorUtilizado, on_delete=models.CASCADE)
+    parametroADeterminar = models.CharField(max_length=50, null=True, blank=True)
+    materialUso = models.ForeignKey(MaterialUso, on_delete=models.CASCADE)
+    recipiente = models.ForeignKey(Recipiente, on_delete=models.CASCADE)
+    preservadorUtilizado = models.ForeignKey(PreservadorUtilizado, on_delete=models.CASCADE)
     # True para puntual, False para compuesta ⬇︎, o podria ser una entidad para usar el id
     tipoMuestreo = models.BooleanField(default=False)  
-    frecuenciaMuestreo = models.ForeignKey(frecuenciaMuestreo, on_delete=models.CASCADE)
-    tipoAgua = models.ForeignKey(tipoAgua, on_delete=models.CASCADE)
-    cuerpoReceptor = models.ForeignKey(cuerpoReceptor, on_delete=models.CASCADE)
+    frecuenciaMuestreo = models.ForeignKey(FrecuenciaMuestreo, on_delete=models.CASCADE)
+    tipoAgua = models.ForeignKey(TipoAgua, on_delete=models.CASCADE)
+    cuerpoReceptor = models.ForeignKey(CuerpoReceptor, on_delete=models.CASCADE)
     def __str__(self):
         return f"Procedimiento de Muestreo - Parametro: {self.ParametroADeterminar} - Tipo: {'Puntual' if self.tipoMuestreo else 'Compuesta'}"
 
@@ -203,7 +168,7 @@ class PlanMuestreo(models.Model):
     fechaInicial = models.DateField(null=True, blank=True)
     final = models.CharField(max_length=50, null=True, blank=True)
     fechaFinal = models.DateField(null=True, blank=True)
-    observaciones = models.TextField(max_length=255, null=True, blank=True)
+    observacion = models.TextField(max_length=255, null=True, blank=True)
     
     def __str__(self):
         return f"Plan de Muestreo - Inicial: {self.inicial} - Final: {self.final}"
@@ -211,14 +176,14 @@ class PlanMuestreo(models.Model):
 
 # #------------- PRIMERA HOJA DEL FORMATO -------------
 class ProtocoloMuestreo(models.Model):
-    SitioMuestreo = models.ForeignKey(SitioMuestreo, on_delete=models.CASCADE)
-    PuntoMuestreo = models.ForeignKey(PuntoMuestreo, on_delete=models.CASCADE)
-    ProcedimientoMuestreo = models.ForeignKey(ProcedimientoMuestreo, on_delete=models.CASCADE)
-    PlanMuestreo = models.ForeignKey(PlanMuestreo, on_delete=models.CASCADE)
-    OrdenTrabajo = models.ForeignKey(OrdenTrabajo, on_delete=models.CASCADE)
+    sitioMuestreo = models.ForeignKey(SitioMuestreo, on_delete=models.CASCADE, null=True, blank=True)
+    puntoMuestreo = models.ForeignKey(PuntoMuestreo, on_delete=models.CASCADE)
+    procedimientoMuestreo = models.ForeignKey(ProcedimientoMuestreo, on_delete=models.CASCADE)
+    planMuestreo = models.ForeignKey(PlanMuestreo, on_delete=models.CASCADE)
+    aguaResidualInforme = models.ForeignKey('AguaResidualInforme', on_delete=models.CASCADE, null=True, blank=True)
     
     def __str__(self):
-        return f"Protocolo de Muestreo - OT: {self.OrdenTrabajo.codigo} - Punto: {self.PuntoMuestreo.identificacionPunto}"
+        return f"Protocolo de Muestreo - OT: {self.AguaResidualInforme.OrdenTrabajo.codigo} - Punto: {self.PuntoMuestreo.identificacionPunto}"
 
 ## ------------- 5.- HOJA DE CAMPO -------------
 class PhMuestra(models.Model):
@@ -293,10 +258,6 @@ class MuestraHojaCampo(models.Model):
     
     
 class HojaCampo(models.Model):
-    #podria no se necesaria por la relacion con ProtocoloMuestreo ⬇︎
-    OrdenTrabajo = models.ForeignKey(OrdenTrabajo, on_delete=models.CASCADE)
-    # Podria no ser necesario si se trae de una consulta
-    nombreEmpresa = models.CharField(max_length=255)
     # es lo mismo que el atributo identificacionPunto del modelo PuntoMuestreo, podria no ser necesario ⬇︎
     idMuestra = models.CharField(max_length=50)
     #siempre va a ser la norma NOM-002-SEMARNAT-1996/NMX-AA-003-1980 asi que podria evitarse ⬇︎
@@ -304,22 +265,29 @@ class HojaCampo(models.Model):
     # se refiere a si es Bajo techo o Intemperie/Cielo abierto ⬇︎
     condicionMuestreo = models.BooleanField(max_length=50)
     fechaMuestreo = models.DateField()
-    MuestraHojaCampo = models.ForeignKey(MuestraHojaCampo, on_delete=models.CASCADE, null=True, blank=True)
-    observaciones = models.TextField(max_length=255, null=True, blank=True)
+    muestraHojaCampo = models.ForeignKey(MuestraHojaCampo, on_delete=models.CASCADE, null=True, blank=True)
+    observacion = models.TextField(max_length=255, null=True, blank=True)
     # Podria no ser necesario si se trae de una consulta ⬇︎
     muestreador = models.CharField(max_length=255, null=True, blank=True)
-    supervisor = models.CharField(max_length=255, null=True, blank=True)                                                                             
+    supervisor = models.CharField(max_length=255, null=True, blank=True)
+    aguaResidualInforme = models.ForeignKey('AguaResidualInforme', on_delete=models.CASCADE, null=True, blank=True)                                                                        
 ## ------------- 6.- CROQUIS DE UBICACION -------------
 
 class CroquisUbicacion(models.Model):
     # Podria no ser necesario si se trae de una consulta ⬇︎
-    nombreEmpresa = models.CharField(max_length=255)
     domicilio = models.CharField(max_length=255)
     croquis = models.ImageField(upload_to='croquis/', null=True, blank=True)
     comentario = models.TextField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return f"Croquis de Ubicación - OT: {self.OrdenTrabajo.codigo} - Muestra: {self.idMuestra}"
+        return f"Croquis Id {self.id} - Domicilio: {self.domicilio}"
+    
+# ------------------- INFORME --------------------
+
+class AguaResidualInforme(models.Model):
+    OrdenTrabajo = models.ForeignKey(OrdenTrabajo, on_delete=models.CASCADE)
+    CroquisUbicacion = models.ForeignKey(CroquisUbicacion, on_delete=models.CASCADE)
+
 
 #  ------------- CADENA DE CUSTODIA -------------
 class Preservador(models.Model):
@@ -348,6 +316,7 @@ class Contenedor(models.Model):
 
     def __str__(self):
         return self.codigo + ' - ' + self.nombre
+    
 class Parametro(models.Model):
     nombre = models.CharField(max_length=50)
 
@@ -429,7 +398,7 @@ class PreservadorMuestra(models.Model):
 
 #mover a la app del laboratorio
 class RegistroCustodia(models.Model):
-    CustodiaExterna = models.ForeignKey(CustodiaExterna, on_delete=models.CASCADE)
+    custodiaExterna = models.ForeignKey(CustodiaExterna, on_delete=models.CASCADE)
     entregadoPor = models.CharField(max_length=100)
     fechaEntrega = models.DateField()
     horaEntrega = models.TimeField()
