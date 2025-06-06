@@ -77,7 +77,7 @@ class TipoDescarga(models.Model):
         return self.nombre
 
 class AguaResidualTratamiento(models.Model):
-    nombre = models.CharField(max_length=50, null=True, blank=True)
+    nombre = models.CharField(max_length=50)
     
     def __str__(self):
         return self.nombre if self.nombre else "No especificado"
@@ -156,7 +156,7 @@ class ProcedimientoMuestreo(models.Model):
     cuerpoReceptor = models.ForeignKey(CuerpoReceptor, on_delete=models.CASCADE, null=True, blank=True)
     cuerpoReceptorOtro = models.CharField(max_length=50, null=True, blank=True)
     def __str__(self):
-        return f"Procedimiento de Muestreo - Parametro: {self.ParametroADeterminar} - Tipo: {'Puntual' if self.tipoMuestreo else 'Compuesta'}"
+        return f"Procedimiento de Muestreo - Parametro: {self.parametroADeterminar} - Tipo: {'Puntual' if self.tipoMuestreo else 'Compuesta'}"
 
 # #------------- 4.- PLAN DE MUESTREO -------------
 class PlanMuestreo(models.Model):
@@ -205,6 +205,7 @@ class ConductividadMuestra(models.Model):
     
     def __str__(self):
         cond_values = [self.cond1, self.cond2, self.cond3]
+        
 class TemperaturaAireMuestra(models.Model):
     tempAire1 = models.DecimalField(max_digits=5, decimal_places=2)
     tempAire2 = models.DecimalField(max_digits=5, decimal_places=2)
@@ -212,6 +213,7 @@ class TemperaturaAireMuestra(models.Model):
     
     def __str__(self):
         tempAire_values = [self.tempAire1, self.tempAire2, self.tempAire3]
+        
 class TiempoMuestra(models.Model):
     tiempo1 = models.DecimalField(max_digits=10, decimal_places=2)
     tiempo2 = models.DecimalField(max_digits=10, decimal_places=2)
@@ -219,6 +221,7 @@ class TiempoMuestra(models.Model):
     
     def __str__(self):
         tiempo_values = [self.tiempo1, self.tiempo2, self.tiempo3]
+        
 class VolumenMuestra(models.Model):
     volumen1 = models.DecimalField(max_digits=10, decimal_places=2)
     volumen2 = models.DecimalField(max_digits=10, decimal_places=2)
