@@ -1185,61 +1185,429 @@ class AguaResidualInformeSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class PreservadorSerializer(serializers.ModelSerializer):
+    nombre = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'El nombre del preservador es obligatorio.',
+            'blank': 'El nombre del preservador no puede estar en blanco.',
+            'max_length': 'El nombre del preservador no puede exceder los 50 caracteres.'
+        }
+    )
+
     class Meta:
         model = Preservador
         fields = '__all__'
         
 class MatrizSerializer(serializers.ModelSerializer):
+    codigo = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=20,
+        error_messages={
+            'required': 'El código es obligatorio.',
+            'blank': 'El código no puede estar en blanco.',
+            'max_length': 'El código no puede exceder los 20 caracteres.'
+        }
+    )
+    nombre = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'El nombre es obligatorio.',
+            'blank': 'El nombre no puede estar en blanco.',
+            'max_length': 'El nombre no puede exceder los 50 caracteres.'
+        }
+    )
+
     class Meta:
         model = Matriz
         fields = '__all__'
         
 class ClaveSerializer(serializers.ModelSerializer):
+    codigo = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=20,
+        error_messages={
+            'required': 'El código es obligatorio.',
+            'blank': 'El código no puede estar en blanco.',
+            'max_length': 'El código no puede exceder los 20 caracteres.'
+        }
+    )
+    nombre = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'El nombre es obligatorio.',
+            'blank': 'El nombre no puede estar en blanco.',
+            'max_length': 'El nombre no puede exceder los 50 caracteres.'
+        }
+    )
     class Meta:
         model = Clave
         fields = '__all__'
         
 class ContenedorSerializer(serializers.ModelSerializer):
+    codigo = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=20,
+        error_messages={
+            'required': 'El código es obligatorio.',
+            'blank': 'El código no puede estar en blanco.',
+            'max_length': 'El código no puede exceder los 20 caracteres.'
+        }
+    )
+    nombre = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'El nombre es obligatorio.',
+            'blank': 'El nombre no puede estar en blanco.',
+            'max_length': 'El nombre no puede exceder los 50 caracteres.'
+        }
+    )
     class Meta:
         model = Contenedor
         fields = '__all__'
         
 class ParametroSerializer(serializers.ModelSerializer):
+    nombre = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'El nombre del preservador es obligatorio.',
+            'blank': 'El nombre del preservador no puede estar en blanco.',
+            'max_length': 'El nombre del preservador no puede exceder los 50 caracteres.'
+        }
+    )
     class Meta:
         model = Parametro
         fields = '__all__'
         
 class PrioridadSerializer(serializers.ModelSerializer):
+    codigo = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=20,
+        error_messages={
+            'required': 'El código es obligatorio.',
+            'blank': 'El código no puede estar en blanco.',
+            'max_length': 'El código no puede exceder los 20 caracteres.'
+        }
+    )
+    descripcion = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'La descripción es obligatoria.',
+            'blank': 'La descripción no puede estar en blanco.',
+            'max_length': 'La descripción no puede exceder los 50 caracteres.'
+        }
+    )
+
     class Meta:
         model = Prioridad
         fields = '__all__'
         
 class FiltroSerializer(serializers.ModelSerializer):
+    codigo = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=20,
+        error_messages={
+            'required': 'El código es obligatorio.',
+            'blank': 'El código no puede estar en blanco.',
+            'max_length': 'El código no puede exceder los 20 caracteres.'
+        }
+    )
+    descripcion = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=50,
+        error_messages={
+            'max_length': 'La descripción no puede exceder los 50 caracteres.'
+        }
+    )
+
     class Meta:
         model = Filtro
         fields = '__all__'
         
 class EstadoCustodiaSerializer(serializers.ModelSerializer):
+    descripcion = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=20,
+        error_messages={
+            'required': 'La descripción es obligatoria.',
+            'blank': 'La descripción no puede estar en blanco.',
+            'max_length': 'La descripción no puede exceder los 20 caracteres.'
+        }
+    )
+
     class Meta:
         model = EstadoCustodia
         fields = '__all__'
         
 class CustodiaExternaSerializer(serializers.ModelSerializer):
+    contacto = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'El nombre del contacto es obligatorio.',
+            'blank': 'El contacto no puede estar en blanco.',
+            'max_length': 'Máximo 50 caracteres.'
+        }
+    )
+    puestoCargoContacto = serializers.CharField(required=False, allow_blank=True, max_length=50)
+    celularContacto = serializers.CharField(required=False, allow_blank=True, max_length=50)
+    correoContacto = serializers.EmailField(
+        required=False,
+        allow_blank=True,
+        max_length=50,
+        error_messages={
+            'invalid': 'El formato del correo no es válido.',
+            'max_length': 'Máximo 50 caracteres.'
+        }
+    )
+    puntosMuestreoAutorizados = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'Este campo es obligatorio.',
+            'blank': 'Este campo no puede estar en blanco.',
+            'max_length': 'Máximo 50 caracteres.'
+        }
+    )
+    modificacionOrdenTrabajo = serializers.BooleanField(required=True)
+    observacionesModificacion = serializers.CharField(required=False, allow_blank=True, max_length=120)
+    asesoriaGestionAmbiental = serializers.BooleanField(required=True)
+    muestreoRequerido = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        max_length=50,
+        error_messages={
+            'required': 'Este campo es obligatorio.',
+            'blank': 'Este campo no puede estar vacío.',
+            'max_length': 'Máximo 50 caracteres.'
+        }
+    )
+    fechaFinal = serializers.DateField(required=False)
+    horaFinal = serializers.TimeField(required=False)
+
+    muestraCompuesta = serializers.BooleanField(required=True)
+    idMuestraCompuesta = serializers.CharField(required=False, allow_blank=True, max_length=50)
+
+    muestraPuntual = serializers.BooleanField(required=True)
+    idMuestraPuntual = serializers.CharField(required=False, allow_blank=True, max_length=50)
+
+    observaciones = serializers.CharField(required=False, allow_blank=True, max_length=325)
+
+    estado = serializers.PrimaryKeyRelatedField(
+        queryset=EstadoCustodia.objects.all(),
+        required=True,
+        error_messages={
+            'required': 'Debe seleccionar un estado de custodia válido.',
+            'does_not_exist': 'Estado de custodia no válido.'
+        }
+    )
+    prioridad = serializers.PrimaryKeyRelatedField(
+        queryset=Prioridad.objects.all(),
+        required=True,
+        error_messages={
+            'required': 'Debe seleccionar una prioridad válida.',
+            'does_not_exist': 'Prioridad no válida.'
+        }
+    )
+    receptor = serializers.PrimaryKeyRelatedField(
+        queryset=Receptor.objects.all(),
+        required=True,
+        error_messages={
+            'required': 'Debe seleccionar un receptor válido.',
+            'does_not_exist': 'Receptor no válido.'
+        }
+    )
+    ordenTrabajo = serializers.PrimaryKeyRelatedField(
+        queryset=OrdenTrabajo.objects.all(),
+        required=True,
+        error_messages={
+            'required': 'Debe seleccionar una orden de trabajo válida.',
+            'does_not_exist': 'Orden de trabajo no válida.'
+        }
+    )
+
     class Meta:
         model = CustodiaExterna
         fields = '__all__'
         
 class MuestraSerializer(serializers.ModelSerializer):
+    identificacionCampo = serializers.CharField(
+        required=True,
+        max_length=50,
+        error_messages={
+            'required': 'La identificación de campo es obligatoria.',
+            'max_length': 'Máximo 50 caracteres.'
+        }
+    )
+    fechaMuestreo = serializers.DateField(
+        required=True,
+        error_messages={'required': 'La fecha de muestreo es obligatoria.'}
+    )
+    horaMuestreo = serializers.TimeField(
+        required=True,
+        error_messages={'required': 'La hora de muestreo es obligatoria.'}
+    )
+    volumenCantidad = serializers.CharField(required=False, allow_blank=True, max_length=50)
+    numeroContenedor = serializers.CharField(
+        required=True,
+        max_length=50,
+        error_messages={'required': 'El número de contenedor es obligatorio.'}
+    )
+    origenMuestra = serializers.CharField(
+        required=True,
+        max_length=50,
+        error_messages={'required': 'El origen de la muestra es obligatorio.'}
+    )
+    idLaboratorio = serializers.CharField(required=False, allow_blank=True, max_length=50)
+
+    filtro = serializers.PrimaryKeyRelatedField(
+        queryset=Filtro.objects.all(),
+        required=False,
+        allow_null=True,
+        error_messages={'does_not_exist': 'Filtro no válido.'}
+    )
+
+    matriz = serializers.PrimaryKeyRelatedField(
+        queryset=Matriz.objects.all(),
+        error_messages={'required': 'La matriz es obligatoria.', 'does_not_exist': 'Matriz no válida.'}
+    )
+
+    contenedor = serializers.PrimaryKeyRelatedField(
+        queryset=Contenedor.objects.all(),
+        error_messages={'required': 'El contenedor es obligatorio.', 'does_not_exist': 'Contenedor no válido.'}
+    )
+
+    parametro = serializers.PrimaryKeyRelatedField(
+        queryset=Parametro.objects.all(),
+        error_messages={'required': 'El parámetro es obligatorio.', 'does_not_exist': 'Parámetro no válido.'}
+    )
+
+    custodiaExterna = serializers.PrimaryKeyRelatedField(
+        queryset=CustodiaExterna.objects.all(),
+        error_messages={'required': 'La custodia externa es obligatoria.', 'does_not_exist': 'Custodia no válida.'}
+    )
+
+    preservador = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Preservador.objects.all(),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = Muestra
         fields = '__all__'
-        
+
+    def create(self, validated_data):
+        preservadores = validated_data.pop('preservador', [])
+        muestra = super().create(validated_data)
+        for p in preservadores:
+            PreservadorMuestra.objects.create(muestra=muestra, preservador=p)
+        return muestra
+
+    def update(self, instance, validated_data):
+        preservadores = validated_data.pop('preservador', None)
+        instance = super().update(instance, validated_data)
+        if preservadores is not None:
+            instance.preservador.clear()
+            for p in preservadores:
+                PreservadorMuestra.objects.create(muestra=instance, preservador=p)
+        return instance
+
 class PreservadorMuestraSerializer(serializers.ModelSerializer):
+    preservador = serializers.PrimaryKeyRelatedField(
+        queryset=Preservador.objects.all(),
+        error_messages={
+            'required': 'El preservador es obligatorio.',
+            'does_not_exist': 'Preservador no válido.'
+        }
+    )
+    muestra = serializers.PrimaryKeyRelatedField(
+        queryset=Muestra.objects.all(),
+        error_messages={    
+            'required': 'La muestra es obligatoria.',
+            'does_not_exist': 'Muestra no válida.'
+        }
+    )
+
     class Meta:
         model = PreservadorMuestra
         fields = '__all__'
         
 class RegistroCustodiaSerializer(serializers.ModelSerializer):
+    custodiaExterna = serializers.PrimaryKeyRelatedField(
+        queryset=CustodiaExterna.objects.all(),
+        error_messages={
+            'required': 'La custodia externa es obligatoria.',
+            'does_not_exist': 'Custodia externa no válida.'
+        }
+    )
+    
+    entregadoPor = serializers.CharField(
+        max_length=100,
+        required=True,
+        error_messages={
+            'required': 'El campo "entregado por" es obligatorio.',
+            'max_length': 'Máximo 100 caracteres.'
+        }
+    )
+
+    fechaEntrega = serializers.DateField(
+        required=True,
+        error_messages={'required': 'La fecha de entrega es obligatoria.'}
+    )
+
+    horaEntrega = serializers.TimeField(
+        required=True,
+        error_messages={'required': 'La hora de entrega es obligatoria.'}
+    )
+
+    recibidoPor = serializers.CharField(
+        max_length=100,
+        required=True,
+        error_messages={
+            'required': 'El campo "recibido por" es obligatorio.',
+            'max_length': 'Máximo 100 caracteres.'
+        }
+    )
+
+    fechaEecepcion = serializers.DateField(
+        required=True,
+        error_messages={'required': 'La fecha de recepción es obligatoria.'}
+    )
+
+    horaRecepcion = serializers.TimeField(
+        required=True,
+        error_messages={'required': 'La hora de recepción es obligatoria.'}
+    )
+
     class Meta:
         model = RegistroCustodia
         fields = '__all__'
+
+    def validate(self, data):
+        if data['fechaEntrega'] > data['fechaEecepcion']:
+            raise serializers.ValidationError("La fecha de recepción no puede ser anterior a la fecha de entrega.")
+        if data['fechaEntrega'] == data['fechaEecepcion'] and data['horaEntrega'] > data['horaRecepcion']:
+            raise serializers.ValidationError("La hora de recepción no puede ser anterior a la hora de entrega.")
+        return data

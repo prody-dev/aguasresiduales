@@ -10,7 +10,6 @@ class Receptor(models.Model):
     def __str__(self):
         return f"{self.nombrePila} {self.apPaterno} {self.apMaterno}"
 
-
 class Estado(models.Model):
     nombre = models.CharField(max_length=50)
 
@@ -99,7 +98,6 @@ class PuntoMuestreo(models.Model):
     def __str__(self):
         return self.identificacionPunto
 
-
 # #------------- 3.- PROCEDIMIENTO DE MUESTREO -------------
 class MaterialUso(models.Model):
     # Siempre van todos seleccionados, podria no necesitarse este modelo ⬇︎
@@ -136,6 +134,7 @@ class TipoAgua(models.Model):
         return self.nombre
 
     #Una descarga de agua residual siempre cae solo en 1 cuerpo receptor ⬇︎
+    
 class CuerpoReceptor(models.Model):
     nombre = models.CharField(max_length=50)
     
@@ -169,7 +168,6 @@ class PlanMuestreo(models.Model):
     def __str__(self):
         return f"Plan de Muestreo - Inicial: {self.inicial} - Final: {self.final}"
 
-
 # #------------- PRIMERA HOJA DEL FORMATO -------------
 class ProtocoloMuestreo(models.Model):
     sitioMuestreo = models.ForeignKey(SitioMuestreo, on_delete=models.CASCADE, null=True, blank=True)
@@ -190,7 +188,6 @@ class PhMuestra(models.Model):
     def __str__(self):
         ph_values = [self.ph1, self.ph2, self.ph3]
         
-
 class TemperaturaMuestra(models.Model):
     temp1 = models.DecimalField(max_digits=5, decimal_places=2)
     temp2 = models.DecimalField(max_digits=5, decimal_places=2)
@@ -255,7 +252,6 @@ class MuestraHojaCampo(models.Model):
     lluvia = models.BooleanField(default=False)
     condicion = models.CharField(max_length=50, choices=condiciones_choices, null=True, blank=True)
     
-    
 class HojaCampo(models.Model):
     # es lo mismo que el atributo identificacionPunto del modelo PuntoMuestreo, podria no ser necesario ⬇︎
     idMuestra = models.CharField(max_length=50)
@@ -287,7 +283,6 @@ class CroquisUbicacion(models.Model):
 class AguaResidualInforme(models.Model):
     OrdenTrabajo = models.ForeignKey(OrdenTrabajo, on_delete=models.CASCADE)
     CroquisUbicacion = models.ForeignKey(CroquisUbicacion, on_delete=models.CASCADE)
-
 
 #  ------------- CADENA DE CUSTODIA -------------
 class Preservador(models.Model):
@@ -328,7 +323,7 @@ class Prioridad(models.Model):
     descripcion = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.codigo + ' - ' + self.descripcion\
+        return self.codigo + ' - ' + self.descripcion
             
 #agregar tabla para idfiltro
 class Filtro(models.Model):
