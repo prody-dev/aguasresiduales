@@ -1,3 +1,4 @@
+--INSERTS PARA LA APLICACION CAMPO
 insert campo_preservador (nombre) values 
 ('Hielo'),
 ('H2SO4'),
@@ -30,9 +31,14 @@ insert campo_contenedor (codigo, nombre) VALUES
 ('P', 'Plastico'),
 ('O', 'Otro (describir en observaciones)');
 
-insert campo_tipomuestra (codigo, nombre) VALUES
-('MP', 'Muestra Puntual'),
-('MC', 'Muestra Compuesta');
+insert campo_parametro (nombre) VALUES
+('DBO5, SS, SST, Ct6, pH, Temp, Cond, MF'),
+('Grasas y Aceites'),
+('Cianuro'),
+('Pb, Zn, Cu, Ni, Cd, As'),
+('Hg'),
+('DQO');
+
 
 insert campo_prioridad (codigo, descripcion) VALUES
 ('A', '(15) Dias habiles'),
@@ -44,3 +50,7 @@ insert campo_estadocustodia (descripcion) values
 ('Completado'),
 ('Entregado'),
 ('Finalizado');
+
+UPDATE campo_estadocustodia
+SET descripcion = 'Entregado'
+WHERE id = 3;
